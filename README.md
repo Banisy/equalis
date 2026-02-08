@@ -1,4 +1,4 @@
-# CFA MockGen — Free CFA Level I Mock Exam Generator
+# Equalis Prep Generator —
 
 **Generate unlimited CFA-style mock exams from your own study materials using AI.**
 
