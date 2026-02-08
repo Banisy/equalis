@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MockGen</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0f1c;--bg2:#111827;--card:#1a2236;--card2:#1f2a42;--inp:#0d1526;--brd:#2a3654;--brf:#3b82f6;--t1:#e8edf5;--t2:#8899b4;--t3:#5a6d8a;--ac:#3b82f6;--ach:#2563eb;--acg:rgba(59,130,246,0.15);--ok:#10b981;--okb:rgba(16,185,129,0.1);--err:#ef4444;--errb:rgba(239,68,68,0.1);--warn:#f59e0b;--warnb:rgba(245,158,11,0.1)}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;line-height:1.6}
+.hdr{background:linear-gradient(180deg,#0f1729,var(--bg));border-bottom:1px solid var(--brd);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+.logo{display:flex;align-items:center;gap:12px;font-weight:700;font-size:1.1rem}.logo-i{width:36px;height:36px;background:linear-gradient(135deg,var(--ac),#8b5cf6);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;color:#fff}
+.tabs{display:flex;gap:4px;background:var(--bg2);border-radius:10px;padding:4px;flex-wrap:wrap}.tab{padding:8px 16px;border-radius:8px;border:none;background:0 0;color:var(--t2);font-family:inherit;font-size:.8rem;font-weight:500;cursor:pointer;transition:.2s;white-space:nowrap}.tab:hover{color:var(--t1);background:var(--card)}.tab.active{color:#fff;background:var(--ac)}
+.ctr{max-width:1200px;margin:0 auto;padding:2rem}.vw{display:none}.vw.active{display:block}
+.card{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem}.card-t{font-size:1.1rem;font-weight:600;margin-bottom:1rem}
+.btn{padding:10px 20px;border-radius:8px;border:1px solid transparent;font-family:inherit;font-size:.875rem;font-weight:500;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:8px}
+.btn-p{background:var(--ac);color:#fff;border-color:var(--ac)}.btn-p:hover{background:var(--ach)}.btn-p:disabled{opacity:.5;cursor:not-allowed}
+.btn-s{background:0 0;color:var(--t2);border-color:var(--brd)}.btn-s:hover{border-color:var(--t2);color:var(--t1)}
+.btn-ok{background:var(--ok);color:#fff}.btn-ok:hover{background:#059669}
+.btn-err{background:var(--err);color:#fff}.btn-err:hover{background:#dc2626}
+.btn-sm{padding:6px 14px;font-size:.8rem}.btn-lg{padding:14px 28px;font-size:1rem}
+input[type=text],input[type=password],input[type=number],select{background:var(--inp);border:1px solid var(--brd);border-radius:8px;padding:10px 14px;color:var(--t1);font-family:inherit;font-size:.9rem;width:100%;transition:.2s}input:focus,select:focus{outline:0;border-color:var(--brf)}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem}
+.sc{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:1.25rem}.sl{font-size:.8rem;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem}.sv{font-size:2rem;font-weight:700;background:linear-gradient(135deg,var(--t1),var(--ac));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.tb{display:flex;align-items:center;gap:12px;margin-bottom:.75rem}.tbl{width:240px;font-size:.85rem;color:var(--t2);flex-shrink:0}.tbt{flex:1;height:8px;background:var(--inp);border-radius:4px;overflow:hidden}.tbf{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--ac),#8b5cf6);transition:width .5s}.tbc{width:50px;text-align:right;font-size:.85rem;font-family:'IBM Plex Mono',monospace;color:var(--t3)}
+.uz{border:2px dashed var(--brd);border-radius:12px;padding:3rem;text-align:center;cursor:pointer;transition:.3s;background:var(--card)}.uz:hover,.uz.dg{border-color:var(--ac);background:var(--acg)}
+.fi{display:flex;align-items:center;justify-content:space-between;padding:1rem;border:1px solid var(--brd);border-radius:8px;margin-bottom:.5rem;background:var(--card)}
+.badge{padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:500}.badge-ok{background:var(--okb);color:var(--ok)}.badge-w{background:var(--warnb);color:var(--warn)}
+.pb{width:100%;height:8px;background:var(--inp);border-radius:4px;overflow:hidden}.pf{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--ac),#8b5cf6);transition:width .4s}
+.pt{font-size:.8rem;color:var(--t3);margin-top:.5rem;display:flex;justify-content:space-between}
+.eh{background:var(--bg2);border-bottom:1px solid var(--brd);padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:64px;z-index:90}
+.et{font-family:'IBM Plex Mono',monospace;font-size:1.4rem;font-weight:600}.et.w{color:var(--warn)}.et.d{color:var(--err);animation:pulse 1s infinite}@keyframes pulse{50%{opacity:.6}}
+.qc{max-width:800px;margin:2rem auto;padding:0 2rem}
+.qn{font-size:.85rem;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem}
+.qt{display:inline-block;font-size:.75rem;color:var(--ac);background:var(--acg);padding:3px 10px;border-radius:4px;margin-bottom:1rem}
+.qx{font-size:1.05rem;line-height:1.7;margin-bottom:1.5rem}
+.ch{display:block;width:100%;padding:1rem 1.25rem;margin-bottom:.5rem;border:1px solid var(--brd);border-radius:10px;background:var(--card);color:var(--t1);font-family:inherit;font-size:.95rem;text-align:left;cursor:pointer;transition:.2s;line-height:1.5}
+.ch:hover{border-color:var(--ac);background:var(--card2)}.ch.sel{border-color:var(--ac);background:var(--acg)}
+.cl{display:inline-block;width:28px;height:28px;line-height:28px;text-align:center;border-radius:6px;background:var(--inp);font-weight:600;font-size:.85rem;margin-right:12px}
+.ch.sel .cl{background:var(--ac);color:#fff}.ch.cor{border-color:var(--ok);background:var(--okb)}.ch.inc{border-color:var(--err);background:var(--errb)}
+.ch.cor .cl{background:var(--ok);color:#fff}.ch.inc .cl{background:var(--err);color:#fff}
+.expl{background:var(--bg2);border:1px solid var(--brd);border-radius:10px;padding:1.25rem;margin-top:1rem;line-height:1.7;font-size:.9rem}.expl strong{color:var(--ac)}
+.qnav{display:flex;justify-content:space-between;align-items:center;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--brd)}
+.fb{background:0 0;border:1px solid var(--brd);border-radius:8px;padding:8px 16px;color:var(--t2);font-family:inherit;font-size:.85rem;cursor:pointer;transition:.2s}.fb:hover{border-color:var(--warn);color:var(--warn)}.fb.fl{border-color:var(--warn);color:var(--warn);background:var(--warnb)}
+.qg{display:grid;grid-template-columns:repeat(15,1fr);gap:4px;margin-top:1rem}
+.qi{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:4px;font-size:.7rem;font-family:'IBM Plex Mono',monospace;cursor:pointer;border:1px solid var(--brd);background:var(--inp);color:var(--t3);transition:.15s}
+.qi:hover{border-color:var(--ac)}.qi.ans{background:var(--acg);border-color:var(--ac);color:var(--t1)}.qi.cur{background:var(--ac);color:#fff}.qi.fg{border-color:var(--warn)}
+.gate{position:fixed;top:64px;left:0;right:0;bottom:0;background:rgba(10,15,28,.92);backdrop-filter:blur(6px);z-index:95;display:flex;align-items:center;justify-content:center}
+.gate-c{background:var(--card);border:1px solid var(--brd);border-radius:16px;padding:2.5rem;text-align:center;max-width:500px;width:90%}
+.tc{display:flex;align-items:center;gap:10px;padding:.75rem 1rem;border:1px solid var(--brd);border-radius:8px;margin-bottom:.5rem;cursor:pointer;transition:.2s;background:var(--card)}.tc:hover{border-color:var(--ac)}.tc.ck{border-color:var(--ac);background:var(--acg)}.tc input{accent-color:var(--ac);width:18px;height:18px}.tc-l{flex:1;font-size:.9rem}.tc-c{font-size:.8rem;font-family:'IBM Plex Mono',monospace;color:var(--t3)}
+.rs{width:100%;accent-color:var(--ac);cursor:pointer}
+.fg{margin-bottom:1.25rem}.fl{display:block;font-size:.85rem;font-weight:500;color:var(--t2);margin-bottom:.5rem}
+.if{display:flex;gap:.75rem;align-items:flex-end}.if .fg{flex:1;margin-bottom:0}
+.step{display:flex;gap:1.25rem;margin-bottom:1.5rem;padding:1.25rem;border:1px solid var(--brd);border-radius:10px;background:var(--card)}
+.step-n{width:36px;height:36px;border-radius:50%;background:var(--ac);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;flex-shrink:0}
+.sbrk{text-align:center;padding:4rem 2rem;max-width:600px;margin:0 auto}
+.toast{position:fixed;bottom:2rem;right:2rem;padding:1rem 1.5rem;border-radius:10px;background:var(--card);border:1px solid var(--brd);color:var(--t1);font-size:.9rem;box-shadow:0 10px 40px rgba(0,0,0,.4);transform:translateY(120%);transition:.3s;z-index:1000}.toast.show{transform:translateY(0)}
+@media(max-width:768px){.hdr{padding:0 .5rem}.ctr{padding:1rem}.sg{grid-template-columns:repeat(2,1fr)}.qg{grid-template-columns:repeat(10,1fr)}.tab{padding:6px 8px;font-size:.7rem}.tbl{width:100px;font-size:.7rem}}
+</style></head>
+<body>
+<div class="hdr"><div class="logo"><div class="logo-i">MG</div><span>MockGen</span></div>
+<div class="tabs" id="mainNav">
+<button class="tab active" onclick="V('dashboard')">Dashboard</button>
+<button class="tab" onclick="V('materials')">Materials</button>
+<button class="tab" onclick="V('generate')">Generate</button>
+<button class="tab" onclick="V('qbank')">Q-Bank</button>
+<button class="tab" onclick="V('exams')">Exams</button>
+<button class="tab" onclick="V('settings')">Settings</button>
+<button class="tab" onclick="V('about')">About</button>
+</div></div>
+<div class="gate" id="apiGate" style="display:none"><div class="gate-c">
+<div style="font-size:2.5rem;margin-bottom:1rem">&#128273;</div>
+<h2 style="margin-bottom:.5rem">Welcome to MockGen</h2>
+<p style="color:var(--t2);margin-bottom:1.5rem;font-size:.9rem">Enter your free Cohere API key to get started.</p>
+<div class="fg" style="text-align:left"><label class="fl">Cohere API Key</label><input type="password" id="gateKey" placeholder="Paste your API key"></div>
+<button class="btn btn-p btn-lg" style="width:100%;justify-content:center" onclick="saveGateKey()">Save &amp; Continue</button>
+<p style="font-size:.8rem;color:var(--t3);margin-top:1rem">Free key at <a href="https://dashboard.cohere.com/api-keys" target="_blank" style="color:var(--ac)">dashboard.cohere.com</a></p>
+</div></div>
+
+<div class="vw active" id="vw-dashboard"><div class="ctr">
+<h2 style="margin-bottom:.5rem;font-size:1.5rem">Dashboard</h2>
+<p style="color:var(--t3);margin-bottom:2rem">Your exam preparation at a glance.</p>
+<div class="sg">
+<div class="sc"><div class="sl">PDFs</div><div class="sv" id="s-src">0</div></div>
+<div class="sc"><div class="sl">Pages</div><div class="sv" id="s-pg">0</div></div>
+<div class="sc"><div class="sl">Questions</div><div class="sv" id="s-q">0</div></div>
+<div class="sc"><div class="sl">Exams</div><div class="sv" id="s-ex">0</div></div>
+</div>
+<div class="card"><div class="card-t">Questions by Topic</div><div id="topicBars"></div></div>
+</div></div>
+
+<div class="vw" id="vw-materials"><div class="ctr">
+<h2 style="margin-bottom:1.5rem">Study Materials</h2>
+<div class="uz" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+<div style="font-size:3rem;margin-bottom:1rem">&#128196;</div>
+<div style="color:var(--t2)">Drop PDFs here or click to browse</div></div>
+<input type="file" id="fileInput" accept=".pdf" multiple style="display:none" onchange="handleUpload(this.files)">
+<div style="margin-top:1rem;display:flex;gap:.75rem;flex-wrap:wrap">
+<button class="btn btn-p" onclick="processAll()">&#9889; Process All Unprocessed</button>
+<button class="btn btn-err btn-sm" onclick="resetDB()">&#128465; Delete All Data</button></div>
+<div id="procProg" style="display:none;margin-top:1rem" class="card">
+<div class="card-t">Processing...</div>
+<div class="pb"><div class="pf" id="ppFill" style="width:0%"></div></div>
+<div class="pt"><span id="ppText">Starting...</span><span id="ppPct">0%</span></div>
+<button class="btn btn-err btn-sm" style="margin-top:.75rem" onclick="cancelTask()">Cancel</button></div>
+<div style="margin-top:1.5rem" id="srcList"></div>
+</div></div>
+
+<div class="vw" id="vw-generate"><div class="ctr">
+<h2 style="margin-bottom:.5rem">Generate Questions</h2>
+<p style="color:var(--t3);margin-bottom:2rem">AI generates Level I format questions from your materials, aligned with official learning outcomes.</p>
+<div class="card"><div class="card-t">Select Topics</div><div id="topicSel"></div></div>
+<div class="card"><div class="card-t">Settings</div>
+<div class="fg"><label class="fl">Target questions</label><input type="number" id="targetQ" value="600" min="10" max="5000" step="10" oninput="updateEst()">
+<p id="genEst" style="font-size:.8rem;color:var(--t3);margin-top:.5rem"></p></div>
+<div class="if" style="margin-bottom:1rem">
+<div class="fg"><label class="fl">Questions/chunk</label><input type="number" id="qpc" value="5" min="1" max="10"></div>
+<div class="fg"><label class="fl">API delay (s)</label><input type="number" id="apiDel" value="1" min="0.5" max="10" step="0.5"></div></div>
+<div style="display:flex;gap:.75rem;align-items:center">
+<button class="btn btn-p" id="genBtn" onclick="startGen()">&#9889; Generate</button>
+<button class="btn btn-err btn-sm" id="cancelBtn" style="display:none" onclick="cancelTask()">Cancel</button></div></div>
+<div id="genProg" style="display:none" class="card">
+<div class="card-t">Generating...</div>
+<div class="pb"><div class="pf" id="gpFill" style="width:0%"></div></div>
+<div class="pt"><span id="gpText">Starting...</span><span id="gpPct">0%</span></div></div>
+<div class="card" style="border-color:var(--warn);background:var(--warnb)">
+<p style="font-size:.85rem;color:var(--warn);line-height:1.6">&#128161; <strong>Tip:</strong> A target of <strong>600-1000 questions</strong> is recommended. Each mock draws 180 questions weighted by topic. Not every chunk yields the full count (some are thin/filler), so aim ~20% above your goal. More questions = more variety but more API calls.</p></div>
+</div></div>
+
+<div class="vw" id="vw-qbank"><div class="ctr">
+<h2 style="margin-bottom:.5rem">Question Bank</h2>
+<p style="color:var(--t3);margin-bottom:1.5rem">Browse and practice all generated questions.</p>
+<div class="if" style="margin-bottom:1.5rem">
+<div class="fg"><label class="fl">Topic</label><select id="qbTopic" onchange="qbPage=1;loadQB()"><option value="">All Topics</option></select></div>
+<div class="fg"><label class="fl">Difficulty</label><select id="qbDiff" onchange="qbPage=1;loadQB()"><option value="">All</option><option>easy</option><option>medium</option><option>hard</option></select></div></div>
+<div id="qbCount" style="font-size:.85rem;color:var(--t3);margin-bottom:1rem"></div>
+<div id="qbList"></div>
+<div id="qbNav" style="display:flex;gap:.75rem;justify-content:center;margin-top:1.5rem"></div>
+</div></div>
+
+<div class="vw" id="vw-exams"><div class="ctr">
+<h2 style="margin-bottom:.5rem">Mock Exams</h2>
+<p style="color:var(--t3);margin-bottom:2rem">Two-session timed mock exams matching the real format.</p>
+<div class="card"><div class="card-t">Create New Exam</div>
+<div class="fg"><label class="fl">Questions per session</label><input type="number" id="examQPS" value="90" min="5" max="90" step="5"></div>
+<div class="fg"><label class="fl">Difficulty: <span id="diffLbl">75%</span></label>
+<input type="range" class="rs" id="diffSlider" min="50" max="100" value="75" step="5" oninput="document.getElementById('diffLbl').textContent=this.value+'%'">
+</div>
+<button class="btn btn-ok btn-lg" onclick="createExam()">Create Mock Exam</button>
+</div>
+<div id="examsList" style="margin-top:1.5rem"></div>
+</div></div>
+
+<div class="vw" id="vw-exam-active">
+<div class="eh">
+<div style="font-size:.9rem;color:var(--t2)"><span id="eSesLbl">Session 1</span> &middot; <span id="eProgTxt">Q 1/90</span></div>
+<div class="et" id="eTimer">02:15:00</div>
+<div style="display:flex;gap:.5rem">
+<button class="btn btn-s btn-sm" onclick="togNav()">&#9776;</button>
+<button class="btn btn-sm" style="background:var(--warn);color:#000" onclick="endSes()">End Session</button>
+</div></div>
+<div id="qNav" style="display:none;position:fixed;right:0;top:128px;width:320px;background:var(--bg2);border-left:1px solid var(--brd);padding:1.25rem;height:calc(100vh - 128px);overflow-y:auto;z-index:80">
+<div style="display:flex;justify-content:space-between;margin-bottom:1rem"><strong>Navigator</strong><button class="btn btn-s btn-sm" onclick="togNav()">&#10005;</button></div>
+<div class="qg" id="qGrid"></div></div>
+<div class="qc" id="qContainer"></div>
+</div>
+
+<div class="vw" id="vw-session-break"><div class="sbrk">
+<div style="font-size:3rem;margin-bottom:1.5rem">&#9749;</div>
+<h2 style="margin-bottom:.75rem">Session 1 Complete</h2>
+<p style="color:var(--t2);margin-bottom:.5rem" id="s1Summary"></p>
+<p style="color:var(--t3);font-size:.9rem;margin-bottom:2rem">Take a break. Session 1 answers are saved.</p>
+<button class="btn btn-p btn-lg" onclick="startS2()">Start Session 2</button>
+<div style="margin-top:1rem"><button class="btn btn-s btn-sm" onclick="submitEarly()">Submit with Session 1 only</button></div>
+</div></div>
+
+<div class="vw" id="vw-exam-review"><div class="ctr"><div id="reviewContent"></div></div></div>
+
+<div class="vw" id="vw-settings"><div class="ctr">
+<h2 style="margin-bottom:1.5rem">Settings</h2>
+<div class="card"><div class="card-t">Cohere API Key</div>
+<p style="font-size:.85rem;color:var(--t2);margin-bottom:1rem">Get a free key from <a href="https://dashboard.cohere.com/api-keys" target="_blank" style="color:var(--ac)">dashboard.cohere.com</a></p>
+<div class="if"><div class="fg"><input type="password" id="apiKeyIn" placeholder="Enter key"></div><div><button class="btn btn-p" onclick="saveKey()">Save</button></div></div>
+<div id="keyStatus" style="margin-top:.5rem;font-size:.85rem"></div></div>
+</div></div>
+
+<div class="vw" id="vw-about"><div class="ctr">
+<h2 style="margin-bottom:.5rem">About MockGen</h2>
+<p style="color:var(--t3);margin-bottom:2rem">Free exam prep for finance certification candidates.</p>
+<div class="card"><div class="card-t">What is MockGen?</div>
+<p style="color:var(--t2);line-height:1.8;margin-bottom:1rem">MockGen generates <strong style="color:var(--t1)">Level I format mock exams</strong> from your study PDFs. AI creates 3-choice MCQs aligned with official learning outcomes. Exams are <strong style="color:var(--t1)">two 90-question sessions</strong> with a break.</p>
+<p style="color:var(--t2);line-height:1.8">All data stays local. Only text chunks go to Cohere AI.</p></div>
+<div class="card"><div class="card-t">Created By</div>
+<p style="color:var(--t2);line-height:1.8"><strong style="color:var(--t1)">Yusuf Eren &#199;elik</strong> &mdash; finance student who believes exam prep should be free and accessible.</p>
+<div style="display:flex;gap:1rem;margin-top:1rem;flex-wrap:wrap">
+<a href="https://www.yusuferencelik.com" target="_blank" class="btn btn-s btn-sm">&#127760; yusuferencelik.com</a>
+<a href="https://www.linkedin.com/in/yusuf-eren-celik/" target="_blank" class="btn btn-s btn-sm">LinkedIn</a></div></div>
+<div class="card"><div class="card-t">Disclaimer</div>
+<p style="color:var(--t2);font-size:.85rem;line-height:1.8"><strong style="color:var(--t1)">MockGen is not affiliated with any certification body.</strong> Questions are AI-generated. For personal educational use only.</p></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+<script>
+let CE=null,CS=1,CQ=0,EA={},EF={},TI=null,TS=0,NO=false,PP=null,ST=null,qbPage=1;
+function V(n){
+if(document.getElementById('vw-exam-active').classList.contains('active')&&n!=='exam-active'){if(!confirm('Leave exam?'))return;clearInterval(TI);document.getElementById('mainNav').style.display='flex'}
+document.querySelectorAll('.vw').forEach(v=>v.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+var vw=document.getElementById('vw-'+n);if(vw)vw.classList.add('active');
+var tabs=['dashboard','materials','generate','qbank','exams','settings','about'];var el=document.querySelectorAll('.tab');var i=tabs.indexOf(n);if(i>=0&&el[i])el[i].classList.add('active');
+if(n==='dashboard')loadStats();if(n==='materials')loadSrc();if(n==='generate'){loadStats().then(function(){renderTopicSel()})}
+if(n==='qbank')initQB();if(n==='exams')loadExams();if(n==='settings')loadKeyStatus()}
+function toast(m,d){d=d||3000;var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},d)}
+function G(u){return fetch(u).then(function(r){return r.json()})}
+function P(u,d){return fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(function(r){return r.json()})}
+function checkKey(){G('/api/stats').then(function(s){document.getElementById('apiGate').style.display=s.api_key_set?'none':'flex'}).catch(function(){document.getElementById('apiGate').style.display='flex'})}
+function saveGateKey(){var k=document.getElementById('gateKey').value.trim();if(!k){toast('Enter a key');return}
+P('/api/config',{cohere_api_key:k}).then(function(){document.getElementById('apiGate').style.display='none';toast('Key saved!');loadStats()})}
+function startPoll(cb){stopPoll();PP=setInterval(function(){G('/api/task/status').then(function(s){cb(s);if(!s.active_task)stopPoll()}).catch(function(){})},1000)}
+function stopPoll(){if(PP){clearInterval(PP);PP=null}}
+function cancelTask(){P('/api/task/cancel',{}).then(function(){toast('Cancelling...')})}
+function loadStats(){return G('/api/stats').then(function(s){ST=s;
+document.getElementById('s-src').textContent=s.sources;document.getElementById('s-pg').textContent=s.total_pages;
+document.getElementById('s-q').textContent=s.questions;document.getElementById('s-ex').textContent=s.exams_taken;
+var c=document.getElementById('topicBars');var t=s.topic_distribution||{};var mx=Math.max.apply(null,Object.values(t).concat([1]));
+if(!Object.keys(t).length){c.innerHTML='<p style="color:var(--t3)">No questions yet.</p>';return s}
+c.innerHTML=Object.entries(t).sort(function(a,b){return b[1]-a[1]}).map(function(e){return'<div class="tb"><div class="tbl">'+e[0]+'</div><div class="tbt"><div class="tbf" style="width:'+(e[1]/mx*100)+'%"></div></div><div class="tbc">'+e[1]+'</div></div>'}).join('');return s})}
+function loadSrc(){G('/api/sources').then(function(src){var c=document.getElementById('srcList');
+if(!src.length){c.innerHTML='<p style="color:var(--t3)">No materials yet.</p>';return}
+c.innerHTML=src.map(function(s){return'<div class="fi"><div style="display:flex;align-items:center;gap:12px"><span style="font-size:1.5rem">&#128196;</span><div><div style="font-weight:500">'+s.filename+'</div><div style="font-size:.8rem;color:var(--t3)">'+s.pages+' pages</div></div></div><div style="display:flex;gap:.5rem;align-items:center">'+(s.processed?'<span class="badge badge-ok">Processed</span>':'<button class="btn btn-p btn-sm" onclick="procOne('+s.id+')">Process</button>')+'<button class="btn btn-err btn-sm" onclick="delSrc('+s.id+')">Del</button></div></div>'}).join('')})}
+function handleUpload(files){var arr=Array.from(files);var i=0;function next(){if(i>=arr.length){document.getElementById('fileInput').value='';loadSrc();return}
+var f=arr[i];var fd=new FormData();fd.append('file',f);toast('Uploading '+f.name+'...');
+fetch('/api/upload',{method:'POST',body:fd}).then(function(r){return r.json()}).then(function(d){
+if(d.error){toast(d.error);if(d.needs_api_key)document.getElementById('apiGate').style.display='flex'}else toast('Uploaded '+f.name);i++;next()})}next()}
+function procOne(sid){fetch('/api/process/'+sid,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'}).then(function(r){return r.json()}).then(function(d){
+if(d.error){toast(d.error);return}
+document.getElementById('procProg').style.display='block';
+startPoll(function(s){var p=s.progress||{};document.getElementById('ppFill').style.width=(p.percent||0)+'%';document.getElementById('ppText').textContent=p.message||'';document.getElementById('ppPct').textContent=(p.percent||0)+'%';
+if(!s.active_task){document.getElementById('procProg').style.display='none';toast('Done!');loadSrc();loadStats()}})})}
+function processAll(){fetch('/api/process-all',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'}).then(function(r){return r.json()}).then(function(d){
+if(d.error){toast(d.error);return}
+document.getElementById('procProg').style.display='block';
+startPoll(function(s){var p=s.progress||{};document.getElementById('ppFill').style.width=(p.percent||0)+'%';document.getElementById('ppText').textContent=p.message||'';document.getElementById('ppPct').textContent=(p.percent||0)+'%';
+if(!s.active_task){document.getElementById('procProg').style.display='none';toast('All processed!');loadSrc();loadStats()}})})}
+function delSrc(sid){if(!confirm('Delete this file and its questions?'))return;
+fetch('/api/sources/'+sid,{method:'DELETE'}).then(function(r){return r.json()}).then(function(d){if(d.error)toast(d.error);else{toast('Deleted');loadSrc();loadStats()}})}
+function resetDB(){if(!confirm('DELETE ALL DATA? PDFs, questions, exams - everything. Cannot undo.'))return;
+if(!confirm('Are you REALLY sure?'))return;
+P('/api/reset-database',{}).then(function(){toast('Database reset');loadSrc();loadStats()})}
+var uz=document.getElementById('uploadZone');
+uz.addEventListener('dragover',function(e){e.preventDefault();uz.classList.add('dg')});uz.addEventListener('dragleave',function(){uz.classList.remove('dg')});
+uz.addEventListener('drop',function(e){e.preventDefault();uz.classList.remove('dg');handleUpload(e.dataTransfer.files)});
+function renderTopicSel(){var ch=ST?ST.chunk_distribution||{}:{};var ex=ST?ST.topic_distribution||{}:{};
+var c=document.getElementById('topicSel');var topics=Object.keys(Object.assign({},ch,ex)).filter(function(t){return t!=='General'}).sort();
+if(!topics.length){c.innerHTML='<p style="color:var(--t3)">Process PDFs first.</p>';return}
+c.innerHTML=topics.map(function(t){var a=ch[t]||0;var e=ex[t]||0;
+return'<div class="tc'+(a>0?' ck':'')+'" onclick="togTc(this)"><input type="checkbox" value="'+t+'" '+(a>0?'checked':'')+'><div class="tc-l">'+t+'</div><div class="tc-c">'+a+' chunks &middot; '+e+' Q</div></div>'}).join('');updateEst()}
+function togTc(el){var cb=el.querySelector('input');cb.checked=!cb.checked;el.classList.toggle('ck',cb.checked);updateEst()}
+function updateEst(){var t=parseInt(document.getElementById('targetQ').value)||600;var qpc=parseInt(document.getElementById('qpc').value)||5;
+var ch=ST?ST.chunk_distribution||{}:{};var sel=getSelTopics();var tc=0;sel.forEach(function(t){tc+=ch[t]||0});
+var cn=Math.min(tc,Math.ceil(t/qpc));
+document.getElementById('genEst').textContent='~ '+cn+' chunks to process ('+cn*qpc+' potential questions) / '+tc+' available'}
+function getSelTopics(){return Array.from(document.querySelectorAll('#topicSel input:checked')).map(function(i){return i.value})}
+function startGen(){var topics=getSelTopics();if(!topics.length){toast('Select topics');return}
+var t=parseInt(document.getElementById('targetQ').value)||600;var qpc=parseInt(document.getElementById('qpc').value)||5;var del=parseFloat(document.getElementById('apiDel').value)||1;
+P('/api/generate',{topics:topics,target_questions:t,questions_per_chunk:qpc,delay:del}).then(function(d){
+if(d.error){toast(d.error);if(d.needs_api_key)document.getElementById('apiGate').style.display='flex';return}
+document.getElementById('genBtn').disabled=true;document.getElementById('cancelBtn').style.display='inline-flex';
+document.getElementById('genProg').style.display='block';
+startPoll(function(s){var p=s.progress||{};document.getElementById('gpFill').style.width=(p.percent||0)+'%';document.getElementById('gpText').textContent=p.message||'';document.getElementById('gpPct').textContent=(p.percent||0)+'%';
+if(!s.active_task){document.getElementById('genBtn').disabled=false;document.getElementById('cancelBtn').style.display='none';document.getElementById('genProg').style.display='none';toast('Generation complete!');loadStats().then(function(){renderTopicSel()})}})})}
+function initQB(){var sel=document.getElementById('qbTopic');if(sel.options.length<=1){G('/api/stats').then(function(s){var td=s.topic_distribution||{};Object.keys(td).sort().forEach(function(t){var o=document.createElement('option');o.value=t;o.textContent=t;sel.appendChild(o)})})}loadQB()}
+function loadQB(){var topic=document.getElementById('qbTopic').value;var diff=document.getElementById('qbDiff').value;
+G('/api/question-bank?topic='+encodeURIComponent(topic)+'&difficulty='+diff+'&page='+qbPage+'&per_page=20').then(function(d){
+document.getElementById('qbCount').textContent=d.total+' questions (page '+d.page+' of '+Math.ceil(d.total/20)+')';
+var c=document.getElementById('qbList');
+if(!d.questions.length){c.innerHTML='<p style="color:var(--t3)">No questions found.</p>';document.getElementById('qbNav').innerHTML='';return}
+c.innerHTML=d.questions.map(function(q,i){var num=(d.page-1)*20+i+1;
+return'<div class="card" id="qb-'+q.id+'"><div class="qn">#'+num+' &middot; '+q.difficulty+'</div><div class="qt">'+q.topic+'</div><div class="qx">'+q.question_text+'</div>'+
+['A','B','C'].map(function(l){return'<button class="ch" onclick="qbAns('+q.id+',\''+l+'\',this)" data-q="'+q.id+'"><span class="cl">'+l+'</span>'+q['choice_'+l.toLowerCase()]+'</button>'}).join('')+
+'<div class="expl" id="qbx-'+q.id+'" style="display:none"><strong>Answer: '+q.correct_answer+'</strong><br>'+q.explanation+'</div></div>'}).join('');
+var tp=Math.ceil(d.total/20);var nav=document.getElementById('qbNav');nav.innerHTML='';
+if(qbPage>1){var pb=document.createElement('button');pb.className='btn btn-s btn-sm';pb.textContent='Previous';pb.onclick=function(){qbPage--;loadQB()};nav.appendChild(pb)}
+if(qbPage<tp){var nb=document.createElement('button');nb.className='btn btn-s btn-sm';nb.textContent='Next';nb.onclick=function(){qbPage++;loadQB()};nav.appendChild(nb)}})}
+function qbAns(qid,ans,btn){var card=document.getElementById('qb-'+qid);var btns=card.querySelectorAll('.ch');btns.forEach(function(b){b.disabled=true;b.style.pointerEvents='none'});
+var expl=document.getElementById('qbx-'+qid);expl.style.display='block';
+var correct=expl.querySelector('strong').textContent.split(': ')[1].trim();
+btns.forEach(function(b){var lbl=b.querySelector('.cl').textContent;
+if(lbl===correct)b.classList.add('cor');else if(lbl===ans&&lbl!==correct)b.classList.add('inc')})}
+function createExam(){var qps=parseInt(document.getElementById('examQPS').value)||90;var diff=parseInt(document.getElementById('diffSlider').value)||75;
+P('/api/exam/create',{questions_per_session:qps,difficulty:diff}).then(function(d){if(d.error){toast(d.error);return}
+toast('Exam created!');loadExamData(d.exam_id)})}
+function loadExams(){G('/api/exams').then(function(exams){var c=document.getElementById('examsList');
+if(!exams.length){c.innerHTML='<p style="color:var(--t3)">No exams yet.</p>';return}
+c.innerHTML=exams.map(function(e){var status=e.completed_at?'<span class="badge badge-ok">'+e.score+'%</span>':(!e.session1_completed?'<span class="badge badge-w">Not started</span>':(e.session1_completed&&!e.session2_completed?'<span class="badge badge-w">S1 done</span>':'<span class="badge badge-w">In progress</span>'));
+return'<div class="fi"><div><div style="font-weight:500">'+e.name+'</div><div style="font-size:.8rem;color:var(--t3)">'+e.total_questions+' questions</div></div><div style="display:flex;gap:.5rem;align-items:center">'+status+(e.completed_at?'<button class="btn btn-s btn-sm" onclick="reviewExam('+e.id+')">Review</button>':'<button class="btn btn-p btn-sm" onclick="loadExamData('+e.id+')">Continue</button>')+'</div></div>'}).join('')})}
+function loadExamData(eid){G('/api/exam/'+eid).then(function(d){if(d.error){toast(d.error);return}
+CE=d;EA={};EF={};if(d.answers){Object.keys(d.answers).forEach(function(k){EA[k]=d.answers[k].user_answer;EF[k]=d.answers[k].flagged})}
+if(d.completed){reviewExam(eid);return}
+if(d.session1_completed&&!d.session2_completed){CS=2;CQ=0;startExamView()}
+else{CS=1;CQ=0;startExamView()}})}
+function startExamView(){document.getElementById('mainNav').style.display='none';V('exam-active');
+var qs=CS===1?CE.session1:CE.session2;document.getElementById('eSesLbl').textContent='Session '+CS;
+TS=135*60;clearInterval(TI);TI=setInterval(tick,1000);renderQ();renderGrid()}
+function tick(){TS--;if(TS<=0){clearInterval(TI);endSes();return}
+var h=Math.floor(TS/3600);var m=Math.floor((TS%3600)/60);var s=TS%60;
+var el=document.getElementById('eTimer');el.textContent=(h<10?'0':'')+h+':'+(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+if(TS<300)el.className='et d';else if(TS<600)el.className='et w';else el.className='et'}
+function renderQ(){var qs=CS===1?CE.session1:CE.session2;if(CQ>=qs.length)CQ=qs.length-1;if(CQ<0)CQ=0;
+var q=qs[CQ];var a=EA[q.id]||'';document.getElementById('eProgTxt').textContent='Q '+(CQ+1)+'/'+qs.length;
+var h='<div class="qn">Question '+(CQ+1)+' of '+qs.length+'</div><div class="qt">'+q.topic+'</div><div class="qx">'+q.question_text+'</div>';
+['A','B','C'].forEach(function(l){h+='<button class="ch'+(a===l?' sel':'')+'" onclick="pickAns(\''+l+'\')"><span class="cl">'+l+'</span>'+q['choice_'+l.toLowerCase()]+'</button>'});
+h+='<div class="qnav"><button class="btn btn-s btn-sm" '+(CQ===0?'disabled':'')+' onclick="CQ--;renderQ();renderGrid()">Previous</button>';
+h+='<button class="fb'+(EF[q.id]?' fl':'')+'" onclick="togFlag()">Flag</button>';
+h+='<button class="btn btn-p btn-sm" '+(CQ>=qs.length-1?'disabled':'')+' onclick="CQ++;renderQ();renderGrid()">Next</button></div>';
+document.getElementById('qContainer').innerHTML=h}
+function pickAns(l){var qs=CS===1?CE.session1:CE.session2;var q=qs[CQ];EA[q.id]=l;
+P('/api/exam/'+CE.exam_id+'/answer',{question_id:q.id,answer:l,flagged:EF[q.id]?1:0,session:CS});renderQ();renderGrid()}
+function togFlag(){var qs=CS===1?CE.session1:CE.session2;var q=qs[CQ];EF[q.id]=!EF[q.id];
+P('/api/exam/'+CE.exam_id+'/answer',{question_id:q.id,answer:EA[q.id]||null,flagged:EF[q.id]?1:0,session:CS});renderQ();renderGrid()}
+function renderGrid(){var qs=CS===1?CE.session1:CE.session2;
+document.getElementById('qGrid').innerHTML=qs.map(function(q,i){var cls='qi';if(i===CQ)cls+=' cur';else if(EA[q.id])cls+=' ans';if(EF[q.id])cls+=' fg';
+return'<div class="'+cls+'" onclick="CQ='+i+';renderQ();renderGrid()">'+(i+1)+'</div>'}).join('')}
+function togNav(){var n=document.getElementById('qNav');n.style.display=n.style.display==='none'?'block':'none'}
+function endSes(){clearInterval(TI);
+if(CS===1){P('/api/exam/'+CE.exam_id+'/complete-session',{session:1});
+var qs=CE.session1;var answered=qs.filter(function(q){return EA[q.id]}).length;
+document.getElementById('s1Summary').textContent='Answered '+answered+'/'+qs.length+' questions';
+document.getElementById('mainNav').style.display='flex';V('session-break')}
+else{submitExam()}}
+function startS2(){CS=2;CQ=0;startExamView()}
+function submitEarly(){if(!confirm('Submit with Session 1 only?'))return;submitExam()}
+function submitExam(){P('/api/exam/'+CE.exam_id+'/submit',{}).then(function(d){
+document.getElementById('mainNav').style.display='flex';toast('Score: '+d.score+'%');reviewExam(CE.exam_id)})}
+function reviewExam(eid){G('/api/exam/'+eid+'/review').then(function(d){V('exam-review');
+var h='<h2 style="margin-bottom:1rem">Exam Review</h2>';
+if(d.score!==null&&d.score!==undefined){var cls=d.score>=70?'sp':'sf';h+='<div style="text-align:center;margin-bottom:2rem"><div class="sv" style="font-size:4rem;-webkit-text-fill-color:'+(d.score>=70?'var(--ok)':'var(--err)')+'">'+d.score+'%</div><div style="color:var(--t3)">'+d.questions.filter(function(q){return q.is_correct}).length+' correct out of '+d.questions.length+'</div></div>'}
+var tb=d.topic_breakdown||{};if(Object.keys(tb).length){h+='<div class="card"><div class="card-t">Topic Breakdown</div>';
+Object.entries(tb).forEach(function(e){var pct=e[1].total>0?Math.round(e[1].correct/e[1].total*100):0;
+h+='<div class="tb"><div class="tbl">'+e[0]+'</div><div class="tbt"><div class="tbf" style="width:'+pct+'%;background:'+(pct>=70?'var(--ok)':'var(--err)')+'"></div></div><div class="tbc">'+pct+'%</div></div>'});h+='</div>'}
+h+='<div style="display:flex;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap"><button class="btn btn-s btn-sm" onclick="revFilter(\'all\')">All</button><button class="btn btn-s btn-sm" onclick="revFilter(\'wrong\')">Incorrect</button><button class="btn btn-s btn-sm" onclick="revFilter(\'flagged\')">Flagged</button><button class="btn btn-s btn-sm" onclick="revFilter(\'s1\')">Session 1</button><button class="btn btn-s btn-sm" onclick="revFilter(\'s2\')">Session 2</button></div>';
+h+='<div id="revQs">';d.questions.forEach(function(q,i){
+h+='<div class="card revq" data-correct="'+(q.is_correct?1:0)+'" data-flagged="'+(q.flagged?1:0)+'" data-session="'+q.session+'"><div class="qn">#'+(i+1)+' &middot; Session '+q.session+' &middot; '+q.difficulty+'</div><div class="qt">'+q.topic+'</div><div class="qx">'+q.question_text+'</div>';
+['A','B','C'].forEach(function(l){var cls='ch';if(l===q.correct_answer)cls+=' cor';else if(l===q.user_answer&&l!==q.correct_answer)cls+=' inc';
+h+='<div class="'+cls+'" style="pointer-events:none"><span class="cl">'+l+'</span>'+q['choice_'+l.toLowerCase()]+'</div>'});
+h+='<div class="expl"><strong>Answer: '+q.correct_answer+'</strong><br>'+q.explanation+'</div></div>'});
+h+='</div>';document.getElementById('reviewContent').innerHTML=h})}
+function revFilter(f){document.querySelectorAll('.revq').forEach(function(el){var show=true;
+if(f==='wrong')show=el.dataset.correct==='0';if(f==='flagged')show=el.dataset.flagged==='1';
+if(f==='s1')show=el.dataset.session==='1';if(f==='s2')show=el.dataset.session==='2';
+el.style.display=show?'block':'none'})}
+function loadKeyStatus(){G('/api/config').then(function(d){document.getElementById('keyStatus').innerHTML=d.is_set?'<span style="color:var(--ok)">Key set: '+d.cohere_api_key+'</span>':'<span style="color:var(--err)">No key set</span>'})}
+function saveKey(){var k=document.getElementById('apiKeyIn').value.trim();if(!k){toast('Enter a key');return}
+P('/api/config',{cohere_api_key:k}).then(function(){toast('Key saved!');loadKeyStatus();document.getElementById('apiGate').style.display='none'})}
+checkKey();loadStats();
+</script></body></html>
